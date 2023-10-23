@@ -47,7 +47,8 @@ public class WebSecurityConfiguration {
         return http.cors().and()
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/users/signup", "/users/login","/users/changePassword/**")
+                .requestMatchers("/users/signup", "/users/login",
+                        "/users/changePassword/**", "/users/forgotPassword")
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()

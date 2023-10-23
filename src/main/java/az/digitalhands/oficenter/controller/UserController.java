@@ -10,6 +10,7 @@ import az.digitalhands.oficenter.request.UserRequest;
 import az.digitalhands.oficenter.response.AuthenticationResponse;
 import az.digitalhands.oficenter.response.UserResponse;
 import az.digitalhands.oficenter.service.UserService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,10 +56,15 @@ public class UserController {
         return userService.getUserById(userId);
     }
 
-    @PostMapping("/changePassword/{userId}")
+    @PutMapping("/changePassword/{userId}")
     public void changePassword(@RequestBody ChangePasswordRequest changePasswordRequest,
                                @PathVariable(name = "userId") Long userId) {
         userService.changePassword(changePasswordRequest, userId);
+    }
+
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<String> forgotPassword(@RequestBody UserRequest userRequest) throws MessagingException {
+        return userService.forgotPassword(userRequest);
     }
 
 }
