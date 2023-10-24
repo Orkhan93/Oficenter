@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/collection")
+@RequestMapping("/collections")
 @RequiredArgsConstructor
 public class CollectionController {
 
@@ -46,7 +46,7 @@ public class CollectionController {
     }
     @DeleteMapping("/{userId}/deleteAll")
         public void deleteAllCollections(@PathVariable (name = "userId")Long userId){
-        collectionService.deleteAllCategories(userId);
+        collectionService.deleteAllCollections(userId);
     }
 
 }

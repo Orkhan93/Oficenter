@@ -9,6 +9,8 @@ import az.digitalhands.oficenter.exception.error.ErrorMessage;
 import az.digitalhands.oficenter.mappers.UserMapper;
 import az.digitalhands.oficenter.repository.UserRepository;
 import az.digitalhands.oficenter.request.ChangePasswordRequest;
+import az.digitalhands.oficenter.request.ForgotPasswordRequest;
+import az.digitalhands.oficenter.request.LoginRequest;
 import az.digitalhands.oficenter.request.UserRequest;
 
 import az.digitalhands.oficenter.response.UserResponse;
@@ -54,10 +56,10 @@ public class UserService {
         }
     }
 
-    public String login(UserRequest userLoginRequest) {
-        Optional<User> optionalUser = userRepository.findByEmailEqualsIgnoreCase(userLoginRequest.getEmail());
+    public String login(LoginRequest loginRequest) {
+        Optional<User> optionalUser = userRepository.findByEmailEqualsIgnoreCase(loginRequest.getEmail());
         if (optionalUser.isPresent()) {
-            return jwtUtil.generateTokenTest(userLoginRequest.getEmail());
+            return jwtUtil.generateTokenTest(loginRequest.getEmail());
         }
         log.error("login {}", optionalUser);
         return BAD_CREDENTIALS;
@@ -83,8 +85,8 @@ public class UserService {
         log.info("changePassword {}", user);
     }
 
-    public ResponseEntity<String> forgotPassword(UserRequest userRequest) throws MessagingException {
-        Optional<User> user = userRepository.findByEmailEqualsIgnoreCase(userRequest.getEmail());
+    public ResponseEntity<String> forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws MessagingException {
+        Optional<User> user = userRepository.findByEmailEqualsIgnoreCase(forgotPasswordRequest.getEmail());
         if (user.isPresent()) {
             emailService.forgetMail(user.get().getEmail(), BY_OFICENTER, user.get().getPassword());
             return ResponseEntity.status(OK).body(OficenterConstant.CHECK_EMAIL);
