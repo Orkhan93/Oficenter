@@ -1,10 +1,10 @@
 package az.digitalhands.oficenter.controller;
 
 import az.digitalhands.oficenter.request.ProductRequest;
+import az.digitalhands.oficenter.request.UpdateStatusRequest;
 import az.digitalhands.oficenter.response.ProductResponse;
 import az.digitalhands.oficenter.service.ProductService;
 import az.digitalhands.oficenter.wrapper.ProductWrapper;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,9 +40,22 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
+    @GetMapping("/getAllStatus")
+    public ResponseEntity<List<ProductWrapper>> getAllProductsStatusTrue() {
+        return productService.getAllProductsStatusTrue();
+    }
+
+
     @DeleteMapping("/{userId}/delete/{productId}")
     public void deleteProductById(@PathVariable(name = "userId") Long userId, @PathVariable(name = "productId") Long productId) {
         productService.deleteProductById(userId, productId);
     }
+
+    @PutMapping("updateStatus/{userId}")
+    public ResponseEntity<ProductResponse> updateStatus(@PathVariable(name = "userId") Long userId,
+                                                        @RequestBody UpdateStatusRequest statusRequest) {
+        return productService.updateStatus(userId, statusRequest);
+    }
+
 
 }

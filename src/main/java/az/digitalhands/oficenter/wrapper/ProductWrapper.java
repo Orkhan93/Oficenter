@@ -1,5 +1,6 @@
 package az.digitalhands.oficenter.wrapper;
 
+import az.digitalhands.oficenter.enums.StatusRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,8 @@ public class ProductWrapper {
     private String description;
     private Integer quantity;
     private Double price;
-    private String status;
+    private StatusRole status;
+    private String imageOfProduct;
     private Long categoryId;
 
 }

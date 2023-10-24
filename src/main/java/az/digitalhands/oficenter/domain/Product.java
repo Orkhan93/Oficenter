@@ -1,12 +1,15 @@
 package az.digitalhands.oficenter.domain;
 
+import az.digitalhands.oficenter.enums.StatusRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @NamedQuery(name = "Product.getAllProducts",
-query = "select new az.digitalhands.oficenter.wrapper.ProductWrapper" +
-        "(p.id,p.name,p.description,p.quantity,p.price,p.status,p.category.id) from Product p")
+        query = "select new az.digitalhands.oficenter.wrapper.ProductWrapper" +
+                "(p.id,p.name,p.description,p.quantity,p.price,p.status,p.imageOfProduct,p.category.id) from Product p")
+@NamedQuery(name = "Product.getAllProductsStatusTrue", query = "select new az.digitalhands.oficenter.wrapper.ProductWrapper" +
+        "(p.id,p.name,p.description,p.quantity,p.price,p.status,p.imageOfProduct,p.category.id)from Product p where p.status='TRUE'")
 
 @Entity
 @Setter
@@ -26,13 +29,16 @@ public class Product {
     private String description;
 
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private StatusRole status;
 
     @Column(name = "price")
     private Double price;
 
     @Column(name = "quantity")
     private Integer quantity;
+    @Column(name = "image")
+    private String imageOfProduct;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
@@ -40,8 +46,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{id=%d, name='%s', description='%s', status='%s', price=%s, quantity=%d}"
-                .formatted(id, name, description, status, price, quantity);
+        return "Product{id=%d, name='%s', description='%s', status=%s, price=%s, quantity=%d, imageOfProduct='%s'}"
+                .formatted(id, name, description, status, price, quantity, imageOfProduct);
     }
-
 }

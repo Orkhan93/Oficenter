@@ -10,4 +10,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<ProductWrapper> getAllProducts();
 
+    List<ProductWrapper> getAllProductsStatusTrue();
+
 }

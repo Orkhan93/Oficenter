@@ -3,6 +3,7 @@ package az.digitalhands.oficenter.service;
 import az.digitalhands.oficenter.domain.Category;
 import az.digitalhands.oficenter.domain.Product;
 import az.digitalhands.oficenter.domain.User;
+import az.digitalhands.oficenter.enums.StatusRole;
 import az.digitalhands.oficenter.enums.UserRole;
 import az.digitalhands.oficenter.exception.CategoryNotFoundException;
 import az.digitalhands.oficenter.exception.ProductNotFoundException;
@@ -13,6 +14,7 @@ import az.digitalhands.oficenter.repository.CategoryRepository;
 import az.digitalhands.oficenter.repository.ProductRepository;
 import az.digitalhands.oficenter.repository.UserRepository;
 import az.digitalhands.oficenter.request.ProductRequest;
+import az.digitalhands.oficenter.request.UpdateStatusRequest;
 import az.digitalhands.oficenter.response.ProductResponse;
 import az.digitalhands.oficenter.wrapper.ProductWrapper;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,7 @@ public class ProductService {
                     () -> new CategoryNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CATEGORY_NOT_FOUND));
             Product product = productMapper.fromRequestToModel(productRequest);
             product.setCategory(category);
+            product.setStatus(StatusRole.FALSE);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(productMapper.fromModelToResponse(productRepository.save(product)));
         } else
@@ -58,11 +61,13 @@ public class ProductService {
             if (Objects.nonNull(product)) {
                 Category category = categoryRepository.findById(productRequest.getCategoryId())
                         .orElseThrow(() -> new CategoryNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CATEGORY_NOT_FOUND));
-                Product updateCourse = productMapper.fromRequestToModel(productRequest);
-                updateCourse.setCategory(category);
+                Product updateProduct = productMapper.fromRequestToModel(productRequest);
+                updateProduct.setCategory(category);
+                updateProduct.setStatus(StatusRole.FALSE);
+
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(productMapper.fromModelToResponse
-                                (productRepository.save(updateCourse)));
+                                (productRepository.save(updateProduct)));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -82,6 +87,11 @@ public class ProductService {
         return ResponseEntity.status(HttpStatus.OK).body(productRepository.getAllProducts());
     }
 
+    public ResponseEntity<List<ProductWrapper>> getAllProductsStatusTrue() {
+        return ResponseEntity.status(HttpStatus.OK).body(productRepository.getAllProductsStatusTrue());
+    }
+
+
     public void deleteProductById(Long userId, Long productId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
@@ -94,5 +104,22 @@ public class ProductService {
             }
         }
     }
+
+    public ResponseEntity<ProductResponse> updateStatus(Long userId, UpdateStatusRequest statusRequest) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
+        if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
+            Product product = productRepository.findById(statusRequest.getId())
+                    .orElseThrow(() -> new ProductNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.PRODUCT_NOT_FOUND));
+            product.setStatus(statusRequest.getNewRole());
+            productRepository.save(product);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(productMapper.fromModelToResponse(productRepository.save(product)));
+
+        } else
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+    }
+
 
 }
