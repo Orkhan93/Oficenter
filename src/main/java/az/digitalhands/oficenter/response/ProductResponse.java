@@ -1,5 +1,6 @@
 package az.digitalhands.oficenter.response;
 
+import az.digitalhands.oficenter.enums.StatusRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,8 @@ public class ProductResponse {
     private String description;
     private Integer quantity;
     private Double price;
-    private String status;
+    private StatusRole status;
+    private String imageOfProduct;
     @JsonIgnore
     private Long categoryId;
 

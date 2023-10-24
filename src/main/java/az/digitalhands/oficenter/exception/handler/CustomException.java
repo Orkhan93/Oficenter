@@ -60,5 +60,11 @@ public class CustomException {
         log.error("handlerContextRuntimeException {}", exception.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
+    @ExceptionHandler(BlogPostNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handlerBlogPostNotFoundException(BlogPostNotFoundException exception){
+        log.error("handlerBlogPostNotFoundException {}",exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,exception.getMessage());
+    }
 
 }

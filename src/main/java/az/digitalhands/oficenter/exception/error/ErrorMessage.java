@@ -15,7 +15,8 @@ public class ErrorMessage {
     public static final String COLLECTION_NOT_FOUND = "Collection not found : ";
     public static final String CATEGORY_NOT_FOUND = "Category not found : ";
     public static final String PRODUCT_NOT_FOUND = "Product not found : ";
-    public static final String SHOP_NOT_FOUND="Shop not found : ";
+    public static final String SHOP_NOT_FOUND = "Shop not found : ";
     public static final String ERROR_IMAGE_DOWNLOAD = "Error image download : ";
+    public static final String BLOG_POST_NOT_FOUND = "BlogPost not found: ";
 
 }
