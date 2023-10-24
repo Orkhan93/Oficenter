@@ -1,9 +1,6 @@
 package az.digitalhands.oficenter.exception.handler;
 
-import az.digitalhands.oficenter.exception.CategoryNotFoundException;
-import az.digitalhands.oficenter.exception.CollectionNotFoundException;
-import az.digitalhands.oficenter.exception.IncorrectPasswordException;
-import az.digitalhands.oficenter.exception.UserNotFoundException;
+import az.digitalhands.oficenter.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -28,16 +25,25 @@ public class CustomException {
         log.error("handlerIncorrectPasswordException {}", exception.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
+
     @ExceptionHandler(CollectionNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProblemDetail handlerCollectionNotFoundException(CollectionNotFoundException exception) {
         log.error("handlerCollectionNotFoundException {}", exception.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
+
     @ExceptionHandler(CategoryNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProblemDetail handlerCategoryNotFoundException(CategoryNotFoundException exception) {
         log.error("handlerCategoryNotFoundException {}", exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handlerProductNotFoundException(ProductNotFoundException exception) {
+        log.error("handlerProductNotFoundException {}", exception.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 

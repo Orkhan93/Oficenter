@@ -79,12 +79,12 @@ public class CollectionService {
         }
     }
 
-    public void deleteAllCategories(Long userId) {
+    public void deleteAllCollections(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             collectionRepository.deleteAll();
-            log.info("deleteAllCategories successfully");
+            log.info("deleteAllCollections successfully");
         }
     }
 

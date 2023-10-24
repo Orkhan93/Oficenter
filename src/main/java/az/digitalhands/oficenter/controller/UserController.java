@@ -6,6 +6,8 @@ import az.digitalhands.oficenter.exception.UserNotFoundException;
 import az.digitalhands.oficenter.exception.error.ErrorMessage;
 import az.digitalhands.oficenter.repository.UserRepository;
 import az.digitalhands.oficenter.request.ChangePasswordRequest;
+import az.digitalhands.oficenter.request.ForgotPasswordRequest;
+import az.digitalhands.oficenter.request.LoginRequest;
 import az.digitalhands.oficenter.request.UserRequest;
 import az.digitalhands.oficenter.response.AuthenticationResponse;
 import az.digitalhands.oficenter.response.UserResponse;
@@ -34,12 +36,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserRequest userRequest) {
-        String jwt = userService.login(userRequest);
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        String jwt = userService.login(loginRequest);
         if (jwt == null) {
             return ResponseEntity.status(BAD_REQUEST).build();
         } else {
-            User user = userRepository.findByEmailEqualsIgnoreCase(userRequest.getEmail()).orElseThrow(
+            User user = userRepository.findByEmailEqualsIgnoreCase(loginRequest.getEmail()).orElseThrow(
                     () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
             if (Objects.nonNull(user)) {
                 AuthenticationResponse response = new AuthenticationResponse();
@@ -63,8 +65,8 @@ public class UserController {
     }
 
     @PostMapping("/forgotPassword")
-    public ResponseEntity<String> forgotPassword(@RequestBody UserRequest userRequest) throws MessagingException {
-        return userService.forgotPassword(userRequest);
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) throws MessagingException {
+        return userService.forgotPassword(forgotPasswordRequest);
     }
 
 }

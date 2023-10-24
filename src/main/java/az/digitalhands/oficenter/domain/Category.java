@@ -26,6 +26,11 @@ public class Category {
     @JoinColumn(name = "collection_id", nullable = false)
     private Collection collection;
 
+    @OneToMany(mappedBy = "category"
+            ,cascade = CascadeType.ALL
+            ,fetch = FetchType.LAZY)
+    private List<Product> products;
+
     @Override
     public String toString() {
         return "Category{id=%d, name='%s'}".formatted(id, name);

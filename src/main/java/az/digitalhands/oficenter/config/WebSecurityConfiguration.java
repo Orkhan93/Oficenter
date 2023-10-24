@@ -48,7 +48,10 @@ public class WebSecurityConfiguration {
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/users/signup", "/users/login",
-                        "/users/changePassword/**", "/users/forgotPassword")
+                        "/users/changePassword/**", "/users/forgotPassword",
+                        "/collections/getAll","/collections/get/**",
+                        "/categories/getAll","/categories/get/**",
+                        "/products/getAll","/products/get/**")
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
