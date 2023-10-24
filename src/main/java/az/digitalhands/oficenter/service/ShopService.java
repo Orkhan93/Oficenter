@@ -25,6 +25,7 @@ import java.util.Objects;
 @Slf4j
 @RequiredArgsConstructor
 public class ShopService {
+
     private final ShopRepository shopRepository;
     private final UserRepository userRepository;
     private final ShopMapper shopMapper;
@@ -84,6 +85,5 @@ public class ShopService {
             log.info("deleteAllShops successfully");
         }
     }
-
 
 }

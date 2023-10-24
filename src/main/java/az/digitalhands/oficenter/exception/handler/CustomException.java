@@ -53,4 +53,12 @@ public class CustomException {
         log.error("handlerShopNotFoundException {}", exception.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
+
+    @ExceptionHandler(ContextRuntimeException.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ProblemDetail handlerContextRuntimeException(ContextRuntimeException exception) {
+        log.error("handlerContextRuntimeException {}", exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
 }

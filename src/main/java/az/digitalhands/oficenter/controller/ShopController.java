@@ -14,6 +14,7 @@ import java.util.List;
 @RequestMapping("/shops")
 @RequiredArgsConstructor
 public class ShopController {
+
     private final ShopService shopService;
 
     @PostMapping("/add/{userId}")
