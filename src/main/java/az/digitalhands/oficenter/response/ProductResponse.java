@@ -1,5 +1,6 @@
 package az.digitalhands.oficenter.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ public class ProductResponse {
     private Integer quantity;
     private Double price;
     private String status;
+    @JsonIgnore
     private Long categoryId;
 
 }
