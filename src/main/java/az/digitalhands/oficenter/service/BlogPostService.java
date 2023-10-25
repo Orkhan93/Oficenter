@@ -41,7 +41,7 @@ public class BlogPostService {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(blogPostMapper.fromModelToResponse(blogPostRepository.save(blogPost)));
         } else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     public ResponseEntity<BlogPostResponse> updateBlog(BlogPostRequest blogPostRequest, Long userId) {
@@ -83,7 +83,7 @@ public class BlogPostService {
                     () -> new BlogPostNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.BLOG_POST_NOT_FOUND));
             blogPostRepository.deleteById(blogPostId);
             log.info("deleteBlogPost {}", blogPost);
-        }
+        } else ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     }
 

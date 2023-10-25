@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,7 +32,7 @@ public class CollectionService {
 
     public ResponseEntity<CollectionResponse> createCollection(CollectionRequest collectionRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.USER_NOT_FOUND));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Collection collection = collectionMapper.fromRequestToModel(collectionRequest);
             return ResponseEntity.status(HttpStatus.OK)
@@ -44,10 +43,10 @@ public class CollectionService {
 
     public ResponseEntity<CollectionResponse> updateCollection(CollectionRequest collectionRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.USER_NOT_FOUND));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Collection findCollection = collectionRepository.findById(collectionRequest.getId()).orElseThrow(
-                    () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.COLLECTION_NOT_FOUND));
+                    () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COLLECTION_NOT_FOUND));
             if (Objects.nonNull(findCollection)) {
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(collectionMapper.fromModelToResponse
@@ -64,28 +63,28 @@ public class CollectionService {
 
     public ResponseEntity<CollectionResponse> getCollectionById(Long collectionId) {
         Collection collection = collectionRepository.findById(collectionId).orElseThrow(
-                () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.COLLECTION_NOT_FOUND));
+                () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COLLECTION_NOT_FOUND));
         return ResponseEntity.status(HttpStatus.OK).body(collectionMapper.fromModelToResponse(collection));
     }
 
     public void deleteById(Long userId, Long collectionId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.USER_NOT_FOUND));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Collection collection = collectionRepository.findById(collectionId).orElseThrow(
-                    () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.COLLECTION_NOT_FOUND));
+                    () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COLLECTION_NOT_FOUND));
             collectionRepository.deleteById(collectionId);
             log.info("deleteCollection {}", collection);
-        }
+        } else ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     public void deleteAllCollections(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.USER_NOT_FOUND));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             collectionRepository.deleteAll();
             log.info("deleteAllCollections successfully");
-        }
+        } else ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 
