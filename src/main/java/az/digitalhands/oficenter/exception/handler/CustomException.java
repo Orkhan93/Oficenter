@@ -67,4 +67,11 @@ public class CustomException {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,exception.getMessage());
     }
 
+    @ExceptionHandler(CustomerNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handlerCustomerNotFoundException(CustomerNotFoundException exception) {
+        log.error("handlerCustomerNotFoundException {}", exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
 }

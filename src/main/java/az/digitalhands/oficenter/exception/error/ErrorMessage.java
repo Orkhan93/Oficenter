@@ -18,5 +18,6 @@ public class ErrorMessage {
     public static final String SHOP_NOT_FOUND = "Shop not found : ";
     public static final String ERROR_IMAGE_DOWNLOAD = "Error image download : ";
     public static final String BLOG_POST_NOT_FOUND = "BlogPost not found: ";
+    public static final String CUSTOMER_NOT_FOUND = "Customer not found : ";
 
 }
