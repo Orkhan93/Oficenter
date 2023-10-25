@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.util.List;
 
 @NamedQuery(name = "Category.getAllCategories",
-        query = "select new az.digitalhands.oficenter.wrapper.CategoryWrapper(c.name) from Category  c")
+        query = "select new az.digitalhands.oficenter.wrapper.CategoryWrapper(c.id,c.name) from Category  c")
 @Entity
 @Setter
 @Getter

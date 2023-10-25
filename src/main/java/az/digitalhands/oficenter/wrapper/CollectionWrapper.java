@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CollectionWrapper {
-
+    private Long id;
     private String name;
 
 }

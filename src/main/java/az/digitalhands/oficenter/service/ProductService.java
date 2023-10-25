@@ -98,12 +98,11 @@ public class ProductService {
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new ProductNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.PRODUCT_NOT_FOUND));
-            if (Objects.nonNull(product)) {
-                productRepository.deleteById(productId);
-                log.info("deleteProductById {}", product);
-            }
-        }
+            productRepository.deleteById(productId);
+            log.info("deleteProductById {}", product);
+        } else ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
 
     public ResponseEntity<ProductResponse> updateStatus(Long userId, UpdateStatusRequest statusRequest) {
         User user = userRepository.findById(userId).orElseThrow(

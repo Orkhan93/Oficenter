@@ -35,10 +35,10 @@ public class CategoryService {
 
     public ResponseEntity<CategoryResponse> createCategory(CategoryRequest categoryRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.USER_NOT_FOUND));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Collection collection = collectionRepository.findById(categoryRequest.getCollectionId()).orElseThrow(
-                    () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.COLLECTION_NOT_FOUND));
+                    () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COLLECTION_NOT_FOUND));
             Category category = categoryMapper.fromRequestToModel(categoryRequest);
             category.setCollection(collection);
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -49,14 +49,14 @@ public class CategoryService {
 
     public ResponseEntity<CategoryResponse> updateCategory(CategoryRequest categoryRequest, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.USER_NOT_FOUND));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Category findCategory = categoryRepository
                     .findById(categoryRequest.getId()).orElseThrow(
-                            () -> new CategoryNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.CATEGORY_NOT_FOUND));
+                            () -> new CategoryNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CATEGORY_NOT_FOUND));
             if (Objects.nonNull(findCategory)) {
                 Collection collection = collectionRepository.findById(categoryRequest.getCollectionId()).orElseThrow(
-                        () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.COLLECTION_NOT_FOUND));
+                        () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COLLECTION_NOT_FOUND));
                 Category category = categoryMapper.fromRequestToModel(categoryRequest);
                 category.setCollection(collection);
 
@@ -75,7 +75,7 @@ public class CategoryService {
 
     public ResponseEntity<CategoryResponse> getCategoryById(Long categoryId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(
-                () -> new CategoryNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.CATEGORY_NOT_FOUND));
+                () -> new CategoryNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CATEGORY_NOT_FOUND));
 
         if (Objects.nonNull(category)) {
             return ResponseEntity.status(HttpStatus.OK).body(categoryMapper.fromModelToResponse(category));
@@ -86,23 +86,23 @@ public class CategoryService {
 
     public void deleteById(Long userId, Long categoryId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.USER_NOT_FOUND));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Category category = categoryRepository
                     .findById(categoryId).orElseThrow(
-                            () -> new CategoryNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.CATEGORY_NOT_FOUND));
+                            () -> new CategoryNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CATEGORY_NOT_FOUND));
             categoryRepository.deleteById(categoryId);
             log.info("deleteById {}", category);
-        }
+        } else ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     public void deleteAllCategories(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(),ErrorMessage.USER_NOT_FOUND));
+                () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             categoryRepository.deleteAll();
             log.info("deleteAllCategories successfully");
-        }
+        } else ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 }

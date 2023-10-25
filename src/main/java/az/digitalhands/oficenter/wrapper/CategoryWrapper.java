@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryWrapper {
-
+    private Long id;
     private String name;
 
 }

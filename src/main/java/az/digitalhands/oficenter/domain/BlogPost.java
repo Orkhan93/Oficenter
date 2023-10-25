@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @NamedQuery(name = "BlogPost.getAllBlogPosts", query = "select new az.digitalhands.oficenter.wrapper.BlogPostWrapper" +
-        "(b.title,b.content,b.creationDate,b.imageOfBlogPost) from BlogPost b")
+        "(b.id,b.title,b.content,b.creationDate,b.imageOfBlogPost) from BlogPost b")
 
 @Entity
 @Setter

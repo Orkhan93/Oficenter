@@ -74,7 +74,7 @@ public class ShopService {
                     () -> new ShopNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.SHOP_NOT_FOUND));
             shopRepository.deleteById(shopId);
             log.info("deleteShop {}", shop);
-        }
+        } else ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     public void deleteAllShops(Long userId) {
@@ -83,7 +83,7 @@ public class ShopService {
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             shopRepository.deleteAll();
             log.info("deleteAllShops successfully");
-        }
+        } else ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 }
