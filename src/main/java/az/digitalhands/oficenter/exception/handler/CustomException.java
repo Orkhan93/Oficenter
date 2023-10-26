@@ -60,17 +60,25 @@ public class CustomException {
         log.error("handlerContextRuntimeException {}", exception.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
+
     @ExceptionHandler(BlogPostNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ProblemDetail handlerBlogPostNotFoundException(BlogPostNotFoundException exception){
-        log.error("handlerBlogPostNotFoundException {}",exception.getMessage());
-        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,exception.getMessage());
+    public ProblemDetail handlerBlogPostNotFoundException(BlogPostNotFoundException exception) {
+        log.error("handlerBlogPostNotFoundException {}", exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(CustomerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ProblemDetail handlerCustomerNotFoundException(CustomerNotFoundException exception) {
         log.error("handlerCustomerNotFoundException {}", exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(ContactNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handlerContactNotFoundException(ContactNotFoundException exception) {
+        log.error("handlerContactNotFoundException {}", exception.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
