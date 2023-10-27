@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface ShopRepository extends JpaRepository<Shop,Long> {
     List<ShopWrapper> getAllShops();
 

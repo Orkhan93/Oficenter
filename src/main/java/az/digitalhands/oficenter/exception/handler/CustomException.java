@@ -81,5 +81,11 @@ public class CustomException {
         log.error("handlerContactNotFoundException {}", exception.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
+    @ExceptionHandler(AboutNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handlerAboutNotFoundException(AboutNotFoundException exception){
+        log.error("handlerAboutNotFoundException {}",exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,exception.getMessage());
+    }
 
 }
