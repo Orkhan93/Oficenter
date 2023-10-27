@@ -38,7 +38,7 @@ public class BlogPostService {
             BlogPost blogPost = blogPostMapper.fromRequestToModel(blogPostRequest);
             blogPost.setCreationDate(LocalDateTime.now());
 
-            return ResponseEntity.status(HttpStatus.OK)
+            return ResponseEntity.status(HttpStatus.CREATED)
                     .body(blogPostMapper.fromModelToResponse(blogPostRepository.save(blogPost)));
         } else
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

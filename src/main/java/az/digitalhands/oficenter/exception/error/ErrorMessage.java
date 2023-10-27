@@ -20,5 +20,6 @@ public class ErrorMessage {
     public static final String BLOG_POST_NOT_FOUND = "BlogPost not found: ";
     public static final String CUSTOMER_NOT_FOUND = "Customer not found : ";
     public static final String CONTACT_NOT_FOUND = "Contact not found : ";
+    public static final String ABOUT_NOT_FOUND = "About not found : ";
 
 }
