@@ -7,9 +7,9 @@ import lombok.Setter;
 
 @NamedQuery(name = "Product.getAllProducts",
         query = "select new az.digitalhands.oficenter.wrapper.ProductWrapper" +
-                "(p.id,p.name,p.description,p.quantity,p.price,p.status,p.imageOfProduct,p.category.id) from Product p")
+                "(p.id,p.name,p.description,p.quantity,p.price,p.status,p.imageData,p.category.id) from Product p")
 @NamedQuery(name = "Product.getAllProductsStatusTrue", query = "select new az.digitalhands.oficenter.wrapper.ProductWrapper" +
-        "(p.id,p.name,p.description,p.quantity,p.price,p.status,p.imageOfProduct,p.category.id)from Product p where p.status='TRUE'")
+        "(p.id,p.name,p.description,p.quantity,p.price,p.status,p.imageData,p.category.id) from Product p where p.status='TRUE'")
 
 @Entity
 @Setter
@@ -28,7 +28,6 @@ public class Product {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private StatusRole status;
 
@@ -37,8 +36,9 @@ public class Product {
 
     @Column(name = "quantity")
     private Integer quantity;
+
     @Column(name = "image")
-    private String imageOfProduct;
+    private String imageData;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
@@ -46,7 +46,8 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{id=%d, name='%s', description='%s', status=%s, price=%s, quantity=%d, imageOfProduct='%s'}"
-                .formatted(id, name, description, status, price, quantity, imageOfProduct);
+        return "Product{id=%d, name='%s', description='%s', status='%s', price=%s, quantity=%d}"
+                .formatted(id, name, description, status, price, quantity);
     }
+
 }

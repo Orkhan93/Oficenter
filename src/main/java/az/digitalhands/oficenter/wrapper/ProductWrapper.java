@@ -18,7 +18,7 @@ public class ProductWrapper {
     private Integer quantity;
     private Double price;
     private StatusRole status;
-    private String imageOfProduct;
+    private String imageData;
     private Long categoryId;
 
 }

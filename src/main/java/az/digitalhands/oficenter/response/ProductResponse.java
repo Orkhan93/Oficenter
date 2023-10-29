@@ -16,6 +16,7 @@ public class ProductResponse {
     private Double price;
     private StatusRole status;
     private String imageOfProduct;
+
     @JsonIgnore
     private Long categoryId;
 

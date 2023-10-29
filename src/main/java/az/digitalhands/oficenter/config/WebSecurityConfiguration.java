@@ -51,12 +51,11 @@ public class WebSecurityConfiguration {
                         "/users/changePassword/**", "/users/forgotPassword",
                         "/collections/getAll", "/collections/get/**",
                         "/categories/getAll", "/categories/get/**",
-                        "/products/getAll", "/products/get/**", "/products/getAllStatus",
-                        "/blog-post/get/**", "/blog-post/getAll",
+                        "/products/getAll", "/products/get/**",
                         "/shops/getAll", "/shops/get/**",
                         "/customers/signup", "/customers/login",
                         "/customers/changePassword/**", "/customers/forgotPassword",
-                        "/contacts/add")
+                        "/carts/**")
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()
