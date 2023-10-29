@@ -21,5 +21,6 @@ public class ErrorMessage {
     public static final String CUSTOMER_NOT_FOUND = "Customer not found : ";
     public static final String CONTACT_NOT_FOUND = "Contact not found : ";
     public static final String ABOUT_NOT_FOUND = "About not found : ";
+    public static final String CART_NOT_FOUND = "Cart not found : ";
 
 }

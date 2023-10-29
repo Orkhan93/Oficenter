@@ -8,6 +8,7 @@ import java.util.List;
 
 @NamedQuery(name = "Collection.getAllCollection",
         query = "select new az.digitalhands.oficenter.wrapper.CollectionWrapper(c.id,c.name) from Collection c")
+
 @Entity
 @Setter
 @Getter

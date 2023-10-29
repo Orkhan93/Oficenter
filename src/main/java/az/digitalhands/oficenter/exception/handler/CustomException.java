@@ -88,4 +88,11 @@ public class CustomException {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,exception.getMessage());
     }
 
+    @ExceptionHandler(CartNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ProblemDetail handlerCartNotFoundException(CartNotFoundException exception) {
+        log.error("handlerCartNotFoundException {}", exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
 }

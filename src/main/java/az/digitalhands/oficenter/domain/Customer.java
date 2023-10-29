@@ -18,7 +18,7 @@ public class Customer {
     @Column(name = "username")
     private String username;
 
-    @Column(name = "passwprd")
+    @Column(name = "password")
     private String password;
 
     @Column(name = "address")
@@ -29,5 +29,14 @@ public class Customer {
 
     @Column(name = "phone")
     private String phone;
+
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+    private Cart cart;
+
+    @Override
+    public String toString() {
+        return "Customer{id=%d, username='%s', password='%s', address='%s', email='%s', phone='%s'}"
+                .formatted(id, username, password, address, email, phone);
+    }
 
 }
