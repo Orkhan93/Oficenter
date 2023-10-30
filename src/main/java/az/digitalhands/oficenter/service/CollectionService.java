@@ -31,10 +31,12 @@ public class CollectionService {
     private final CollectionMapper collectionMapper;
 
     public ResponseEntity<CollectionResponse> createCollection(CollectionRequest collectionRequest, Long userId) {
+        log.info("Inside collectionRequest {}", collectionRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Collection collection = collectionMapper.fromRequestToModel(collectionRequest);
+            log.info("Inside createCollection {}", collection);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(collectionMapper.fromModelToResponse(collectionRepository.save(collection)));
         }
@@ -42,12 +44,14 @@ public class CollectionService {
     }
 
     public ResponseEntity<CollectionResponse> updateCollection(CollectionRequest collectionRequest, Long userId) {
+        log.info("Inside collectionRequest {}", collectionRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Collection findCollection = collectionRepository.findById(collectionRequest.getId()).orElseThrow(
                     () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COLLECTION_NOT_FOUND));
             if (Objects.nonNull(findCollection)) {
+                log.info("Inside updateCollection {}", collectionRequest);
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(collectionMapper.fromModelToResponse
                                 (collectionRepository.save(collectionMapper.fromRequestToModel(collectionRequest))));
@@ -64,6 +68,7 @@ public class CollectionService {
     public ResponseEntity<CollectionResponse> getCollectionById(Long collectionId) {
         Collection collection = collectionRepository.findById(collectionId).orElseThrow(
                 () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COLLECTION_NOT_FOUND));
+        log.info("Inside getCollectionById {}", collection);
         return ResponseEntity.status(HttpStatus.OK).body(collectionMapper.fromModelToResponse(collection));
     }
 
@@ -86,6 +91,5 @@ public class CollectionService {
             log.info("deleteAllCollections successfully");
         } else ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
-
 
 }

@@ -31,10 +31,12 @@ public class ShopService {
     private final ShopMapper shopMapper;
 
     public ResponseEntity<ShopResponse> createShop(ShopRequest shopRequest, Long userId) {
+        log.info("Inside shopRequest {}", shopRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Shop shop = shopMapper.fromRequestToModel(shopRequest);
+            log.info("Inside createShop {}", shop);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(shopMapper.fromModelToResponse(shopRepository.save(shop)));
         }
@@ -42,12 +44,14 @@ public class ShopService {
     }
 
     public ResponseEntity<ShopResponse> updateShop(ShopRequest shopRequest, Long userId) {
+        log.info("Inside shopRequest {}", shopRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Shop findShop = shopRepository.findById(shopRequest.getId()).orElseThrow(
                     () -> new ShopNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.SHOP_NOT_FOUND));
             if (Objects.nonNull(findShop)) {
+                log.info("Inside updateShop {}", shopMapper.fromRequestToModel(shopRequest));
                 return ResponseEntity.status(HttpStatus.OK).body(shopMapper.fromModelToResponse
                         (shopRepository.save(shopMapper.fromRequestToModel(shopRequest))));
             } else
@@ -57,12 +61,14 @@ public class ShopService {
     }
 
     public ResponseEntity<List<ShopWrapper>> getAllShops() {
+        log.info("Inside getAllShops {}", shopRepository.getAllShops());
         return ResponseEntity.status(HttpStatus.OK).body(shopRepository.getAllShops());
     }
 
     public ResponseEntity<ShopResponse> getShopById(Long shopId) {
         Shop shop = shopRepository.findById(shopId).orElseThrow(
                 () -> new ShopNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.SHOP_NOT_FOUND));
+        log.info("Inside getShopById {}", shopMapper.fromModelToResponse(shop));
         return ResponseEntity.status(HttpStatus.OK).body(shopMapper.fromModelToResponse(shop));
     }
 

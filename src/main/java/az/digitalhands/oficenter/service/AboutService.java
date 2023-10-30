@@ -32,6 +32,7 @@ public class AboutService {
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             About about = aboutMapper.fromRequestToModel(aboutRequest);
+            log.info("Inside add {}", about);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(aboutMapper.fromModelToResponse(aboutRepository.save(about)));
         }
@@ -45,6 +46,7 @@ public class AboutService {
             aboutRepository.findById(aboutRequest.getId()).orElseThrow(
                     () -> new AboutNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.ABOUT_NOT_FOUND));
             About updatedAbout = aboutMapper.fromRequestToModel(aboutRequest);
+            log.info("Inside update {}", aboutRequest);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(aboutMapper.fromModelToResponse(aboutRepository.save(updatedAbout)));
 

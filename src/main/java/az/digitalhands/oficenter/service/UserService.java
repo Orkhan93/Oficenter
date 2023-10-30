@@ -40,11 +40,13 @@ public class UserService {
     private final EmailService emailService;
 
     public ResponseEntity<?> signUp(UserRequest userSignUpRequest) {
+        log.info("Inside userSignUpRequest {}", userSignUpRequest);
         if (validationSignUp(userSignUpRequest)) {
             Optional<User> user = userRepository.findByEmailEqualsIgnoreCase(userSignUpRequest.getEmail());
             if (user.isEmpty()) {
                 User saved = userMapper.fromUserSignUpRequestToModel(userSignUpRequest);
                 saved.setUserRole(UserRole.ADMIN);
+                log.info("Inside signUp {}", saved);
                 return ResponseEntity.status(CREATED)
                         .body(userRepository.save(saved));
             } else {
@@ -57,6 +59,7 @@ public class UserService {
     }
 
     public String login(LoginRequest loginRequest) {
+        log.info("Inside loginRequest {}", loginRequest);
         Optional<User> optionalUser = userRepository.findByEmailEqualsIgnoreCase(loginRequest.getEmail());
         if (optionalUser.isPresent()) {
             return jwtUtil.generateTokenTest(loginRequest.getEmail());
@@ -68,10 +71,12 @@ public class UserService {
     public ResponseEntity<UserResponse> getUserById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND + userId));
+        log.info("Inside getUserById {}", user);
         return ResponseEntity.ok(userMapper.fromModelToResponse(user));
     }
 
     public void changePassword(ChangePasswordRequest changePasswordRequest, Long userId) {
+        log.info("Inside changePasswordRequest {}", changePasswordRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND + userId));
         if (!user.getPassword().equals(changePasswordRequest.getOldPassword())) {
@@ -82,10 +87,11 @@ public class UserService {
         }
         user.setPassword(changePasswordRequest.getNewPassword());
         userRepository.save(user);
-        log.info("changePassword {}", user);
+        log.info("Inside changePassword {}", user);
     }
 
     public ResponseEntity<String> forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws MessagingException {
+        log.info("Inside forgotPasswordRequest {}", forgotPasswordRequest);
         Optional<User> user = userRepository.findByEmailEqualsIgnoreCase(forgotPasswordRequest.getEmail());
         if (user.isPresent()) {
             emailService.forgetMail(user.get().getEmail(), BY_OFICENTER, user.get().getPassword());
