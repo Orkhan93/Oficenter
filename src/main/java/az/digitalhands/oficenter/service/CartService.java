@@ -61,6 +61,7 @@ public class CartService {
                 cartItem.setQuantity(quantity);
                 cartItem.setPrice(unitPrice);
                 cartItemList.add(cartItem);
+                log.info("Inside addItemToCart {}", cartItem);
                 cartItemRepository.save(cartItem);
             } else {
                 itemQuantity = cartItem.getQuantity() + quantity;
@@ -113,6 +114,7 @@ public class CartService {
             double totalPrice = totalPrice(cartItemList);
             cart.setTotalPrice(totalPrice);
             cart.setTotalItems(totalItem);
+            log.info("Inside updateCart {}", cart);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(cartMapper.fromModelToResponse(cartRepository.save(cart)));
         }
@@ -124,6 +126,7 @@ public class CartService {
         Customer customer = customerRepository.findByEmailEqualsIgnoreCase(customerEmail).orElseThrow(
                 () -> new CustomerNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CUSTOMER_NOT_FOUND));
         Cart cart = customer.getCart();
+        log.info("Inside getCartByCustomerEmail {}", cart);
         return ResponseEntity.status(HttpStatus.OK).body(cartMapper.fromModelToResponse(cart));
     }
 

@@ -32,12 +32,13 @@ public class BlogPostService {
     private final BlogPostMapper blogPostMapper;
 
     public ResponseEntity<BlogPostResponse> createBlog(BlogPostRequest blogPostRequest, Long userId) {
+        log.info("Inside blogPostRequest {}", blogPostRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             BlogPost blogPost = blogPostMapper.fromRequestToModel(blogPostRequest);
             blogPost.setCreationDate(LocalDateTime.now());
-
+            log.info("Inside createBlog {}", blogPost);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(blogPostMapper.fromModelToResponse(blogPostRepository.save(blogPost)));
         } else
@@ -45,6 +46,7 @@ public class BlogPostService {
     }
 
     public ResponseEntity<BlogPostResponse> updateBlog(BlogPostRequest blogPostRequest, Long userId) {
+        log.info("Inside blogPostRequest {}", blogPostRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
@@ -53,6 +55,7 @@ public class BlogPostService {
             if (Objects.nonNull(blogPost)) {
                 BlogPost updatedBlog = blogPostMapper.fromRequestToModel(blogPostRequest);
                 updatedBlog.setCreationDate(LocalDateTime.now());
+                log.info("Inside updateBlog {}", updatedBlog);
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(blogPostMapper.fromModelToResponse(blogPostRepository.save(updatedBlog)));
             } else
@@ -69,6 +72,7 @@ public class BlogPostService {
         BlogPost blogPost = blogPostRepository.findById(blogId).orElseThrow(
                 () -> new BlogPostNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.BLOG_POST_NOT_FOUND));
         if (Objects.nonNull(blogPost)) {
+            log.info("Inside getBlogById {}", blogPost);
             return ResponseEntity.status(HttpStatus.OK).body(blogPostMapper.fromModelToResponse(blogPost));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

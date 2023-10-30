@@ -28,12 +28,14 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryService {
+
     private final CategoryRepository categoryRepository;
     private final CollectionRepository collectionRepository;
     private final UserRepository userRepository;
     private final CategoryMapper categoryMapper;
 
     public ResponseEntity<CategoryResponse> createCategory(CategoryRequest categoryRequest, Long userId) {
+        log.info("Inside categoryRequest {}", categoryRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
@@ -41,6 +43,7 @@ public class CategoryService {
                     () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COLLECTION_NOT_FOUND));
             Category category = categoryMapper.fromRequestToModel(categoryRequest);
             category.setCollection(collection);
+            log.info("Inside createCategory {}", category);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(categoryMapper.fromModelToResponse(categoryRepository.save(category)));
         } else
@@ -48,6 +51,7 @@ public class CategoryService {
     }
 
     public ResponseEntity<CategoryResponse> updateCategory(CategoryRequest categoryRequest, Long userId) {
+        log.info("Inside categoryRequest {}", categoryRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
@@ -59,7 +63,7 @@ public class CategoryService {
                         () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COLLECTION_NOT_FOUND));
                 Category category = categoryMapper.fromRequestToModel(categoryRequest);
                 category.setCollection(collection);
-
+                log.info("Inside updateCategory {}", category);
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(categoryMapper.fromModelToResponse(categoryRepository.save(category)));
             }
@@ -78,6 +82,7 @@ public class CategoryService {
                 () -> new CategoryNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CATEGORY_NOT_FOUND));
 
         if (Objects.nonNull(category)) {
+            log.info("Inside getCategoryById {}", category);
             return ResponseEntity.status(HttpStatus.OK).body(categoryMapper.fromModelToResponse(category));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

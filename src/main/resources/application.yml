@@ -29,6 +29,13 @@ spring:
         persistence:
           sharedCache:
             mode: ENABLE_SELECTIVE
+logging:
+  file:
+    name: logs/digital_hands_oficenter.log
+  level:
+    az.digitalhands.oficenter: DEBUG
+    org.springframework.web: ERROR
+    org.hibernate: ERROR
 encryption:
   salt:
     rounds: 10
