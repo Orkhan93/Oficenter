@@ -55,6 +55,7 @@ public class WebSecurityConfiguration {
                         "/shops/getAll", "/shops/get/**",
                         "/customers/signup", "/customers/login",
                         "/customers/changePassword/**", "/customers/forgotPassword",
+                        "/customers/checkCustomerToken",
                         "/carts/**")
                 .permitAll()
                 .and()

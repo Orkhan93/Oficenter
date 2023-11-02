@@ -103,4 +103,16 @@ public class CustomerService {
                 && customerRequest.getPhone() != null && customerRequest.getPassword() != null;
     }
 
+    public ResponseEntity<?> checkCustomerToken(String token) {
+        try {
+            Boolean tokenExpired = jwtUtil.isTokenExpired(token);
+            if(!tokenExpired)
+                return ResponseEntity.ok("Jwt not expired");
+            else {
+                return ResponseEntity.status(BAD_REQUEST).body("Jwt Expired..");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(BAD_REQUEST).body("Jwt Expired..");
+        }
+    }
 }
