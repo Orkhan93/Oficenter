@@ -69,7 +69,7 @@ public class CustomerController {
         return customerService.forgotPassword(forgotPasswordRequest);
     }
 
-    @PostMapping("/checkCustomerToken")
+    @PostMapping("/checkCustomerToken") //
     public ResponseEntity<?> checkCustomerToken(String token) {
         return customerService.checkCustomerToken(token);
     }

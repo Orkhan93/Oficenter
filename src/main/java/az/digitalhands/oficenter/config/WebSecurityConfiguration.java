@@ -56,7 +56,7 @@ public class WebSecurityConfiguration {
                         "/customers/signup", "/customers/login",
                         "/customers/changePassword/**", "/customers/forgotPassword",
                         "/customers/checkCustomerToken",
-                        "/carts/**")
+                        "/carts/**")//
                 .permitAll()
                 .and()
                 .authorizeHttpRequests()

@@ -103,7 +103,7 @@ public class CustomerService {
                 && customerRequest.getPhone() != null && customerRequest.getPassword() != null;
     }
 
-    public ResponseEntity<?> checkCustomerToken(String token) {
+    public ResponseEntity<?> checkCustomerToken(String token) {//
         try {
             Boolean tokenExpired = jwtUtil.isTokenExpired(token);
             if(!tokenExpired)
