@@ -11,6 +11,7 @@ import az.digitalhands.oficenter.repository.BlogPostRepository;
 import az.digitalhands.oficenter.repository.UserRepository;
 import az.digitalhands.oficenter.request.BlogPostRequest;
 import az.digitalhands.oficenter.response.BlogPostResponse;
+import az.digitalhands.oficenter.response.BlogPostResponseList;
 import az.digitalhands.oficenter.wrapper.BlogPostWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -64,19 +66,21 @@ public class BlogPostService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    public ResponseEntity<List<BlogPostWrapper>> getAllBlogs() {
-        return ResponseEntity.status(HttpStatus.OK).body(blogPostRepository.getAllBlogPosts());
+    public BlogPostResponseList getAllBlogs() {
+        List<BlogPost> blogPosts = blogPostRepository.findAll();
+        BlogPostResponseList list = new BlogPostResponseList();
+        List<BlogPostResponse> blogPostResponses = blogPostMapper.fromModelListToResponseList(blogPosts);
+        list.setBlogPostResponses(blogPostResponses);
+        return list;
     }
 
-    public ResponseEntity<BlogPostResponse> getBlogById(Long blogId) {
-        BlogPost blogPost = blogPostRepository.findById(blogId).orElseThrow(
-                () -> new BlogPostNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.BLOG_POST_NOT_FOUND));
-        if (Objects.nonNull(blogPost)) {
-            log.info("Inside getBlogById {}", blogPost);
-            return ResponseEntity.status(HttpStatus.OK).body(blogPostMapper.fromModelToResponse(blogPost));
+    public BlogPostResponse getBlogById(Long blogId) {
+        Optional<BlogPost> blogPost = blogPostRepository.findById(blogId);
+        if (blogPost.isEmpty()) {
+            throw new BlogPostNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.BLOG_POST_NOT_FOUND);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-
+        log.info("Inside getBlogById {}", blogPost);
+        return blogPostMapper.fromModelToResponse(blogPost.get());
     }
 
     public void deleteBlogPost(Long userId, Long blogPostId) {
@@ -88,7 +92,6 @@ public class BlogPostService {
             blogPostRepository.deleteById(blogPostId);
             log.info("deleteBlogPost {}", blogPost);
         } else ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
     }
 
 }

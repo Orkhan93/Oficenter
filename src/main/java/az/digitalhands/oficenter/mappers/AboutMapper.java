@@ -11,6 +11,8 @@ import org.mapstruct.ReportingPolicy;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface AboutMapper {
 
-About fromRequestToModel(AboutRequest aboutRequest);
-AboutResponse fromModelToResponse(About about);
+    About fromRequestToModel(AboutRequest aboutRequest);
+
+    AboutResponse fromModelToResponse(About about);
+
 }

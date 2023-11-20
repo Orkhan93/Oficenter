@@ -65,4 +65,5 @@ public class AboutService {
 
         } else ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
 }

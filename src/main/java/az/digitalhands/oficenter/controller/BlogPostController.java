@@ -2,9 +2,11 @@ package az.digitalhands.oficenter.controller;
 
 import az.digitalhands.oficenter.request.BlogPostRequest;
 import az.digitalhands.oficenter.response.BlogPostResponse;
+import az.digitalhands.oficenter.response.BlogPostResponseList;
 import az.digitalhands.oficenter.service.BlogPostService;
 import az.digitalhands.oficenter.wrapper.BlogPostWrapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,14 +32,13 @@ public class BlogPostController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<BlogPostWrapper>> getAllBlogs() {
-        return blogPostService.getAllBlogs();
+    public ResponseEntity<BlogPostResponseList> getAllBlogs() {
+        return ResponseEntity.status(HttpStatus.OK).body(blogPostService.getAllBlogs());
     }
 
     @GetMapping("/get/{blogId}")
     public ResponseEntity<BlogPostResponse> getBlogById(@PathVariable Long blogId) {
-        return blogPostService.getBlogById(blogId);
-
+        return ResponseEntity.status(HttpStatus.OK).body(blogPostService.getBlogById(blogId));
     }
 
     @DeleteMapping("/{userId}/delete/{blogPostId}")
