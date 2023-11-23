@@ -81,11 +81,12 @@ public class CustomException {
         log.error("handlerContactNotFoundException {}", exception.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
+
     @ExceptionHandler(AboutNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ProblemDetail handlerAboutNotFoundException(AboutNotFoundException exception){
-        log.error("handlerAboutNotFoundException {}",exception.getMessage());
-        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,exception.getMessage());
+    public ProblemDetail handlerAboutNotFoundException(AboutNotFoundException exception) {
+        log.error("handlerAboutNotFoundException {}", exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(CartNotFoundException.class)
@@ -93,6 +94,13 @@ public class CustomException {
     public ProblemDetail handlerCartNotFoundException(CartNotFoundException exception) {
         log.error("handlerCartNotFoundException {}", exception.getMessage());
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ProblemDetail handlerUnauthorizedException(UnauthorizedException exception) {
+        log.error("handlerUnauthorizedException {}", exception.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, exception.getMessage());
     }
 
 }
