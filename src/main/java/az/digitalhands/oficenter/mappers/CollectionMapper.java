@@ -6,6 +6,8 @@ import az.digitalhands.oficenter.response.CollectionResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring",
         unmappedSourcePolicy = ReportingPolicy.IGNORE,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
@@ -16,5 +18,7 @@ public interface CollectionMapper {
     Collection fromRequestToModel(CollectionRequest collectionRequest);
 
     CollectionResponse fromModelToResponse(Collection collection);
+
+    List<CollectionResponse> fromModelListToResponseList(List<Collection> collections);
 
 }
