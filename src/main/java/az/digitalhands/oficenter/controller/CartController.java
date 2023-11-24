@@ -3,6 +3,7 @@ package az.digitalhands.oficenter.controller;
 import az.digitalhands.oficenter.response.CartResponse;
 import az.digitalhands.oficenter.service.CartService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,19 +18,19 @@ public class CartController {
     public ResponseEntity<CartResponse> addItemsToCart(@RequestParam(name = "productId") Long productId,
                                                        @RequestParam(name = "quantity", required = false, defaultValue = "1") Integer quantity,
                                                        @RequestParam(name = "email") String email) {
-        return cartService.addItemToCart(productId, quantity, email);
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.addItemToCart(productId, quantity, email));
     }
 
     @PostMapping("/update")
     public ResponseEntity<CartResponse> updateCart(@RequestParam(name = "productId") Long productId,
                                                    @RequestParam(name = "quantity", required = false, defaultValue = "1") Integer quantity,
                                                    @RequestParam(name = "email") String email) {
-        return cartService.updateCart(productId, quantity, email);
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.updateCart(productId, quantity, email));
     }
 
     @GetMapping("/get/{customerEmail}")
     public ResponseEntity<CartResponse> getCartByCustomerEmail(@PathVariable(name = "customerEmail") String customerEmail) {
-        return cartService.getCartByCustomerEmail(customerEmail);
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.getCartByCustomerEmail(customerEmail));
     }
 
 }

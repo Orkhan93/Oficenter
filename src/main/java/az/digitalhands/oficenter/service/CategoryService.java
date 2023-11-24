@@ -16,11 +16,9 @@ import az.digitalhands.oficenter.repository.UserRepository;
 import az.digitalhands.oficenter.request.CategoryRequest;
 import az.digitalhands.oficenter.response.CategoryResponse;
 import az.digitalhands.oficenter.response.CategoryResponseList;
-import az.digitalhands.oficenter.wrapper.CategoryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
