@@ -3,6 +3,7 @@ package az.digitalhands.oficenter.service;
 import az.digitalhands.oficenter.domain.Contact;
 import az.digitalhands.oficenter.domain.User;
 import az.digitalhands.oficenter.exception.ContactNotFoundException;
+import az.digitalhands.oficenter.exception.UnauthorizedException;
 import az.digitalhands.oficenter.exception.UserNotFoundException;
 import az.digitalhands.oficenter.exception.error.ErrorMessage;
 import az.digitalhands.oficenter.mappers.ContactMapper;
@@ -10,6 +11,7 @@ import az.digitalhands.oficenter.repository.ContactRepository;
 import az.digitalhands.oficenter.repository.UserRepository;
 import az.digitalhands.oficenter.request.ContactRequest;
 import az.digitalhands.oficenter.response.ContactResponse;
+import az.digitalhands.oficenter.response.ContactResponseList;
 import az.digitalhands.oficenter.wrapper.ContactWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,21 +31,24 @@ public class ContactService {
     private final UserRepository userRepository;
     private final ContactMapper contactMapper;
 
-    public ResponseEntity<ContactResponse> addContact(ContactRequest contactRequest) {
+    public ContactResponse addContact(ContactRequest contactRequest) {
         log.info("Inside addContact {}", contactRequest);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(contactMapper.fromModelToResponse
-                        (contactRepository.save(contactMapper.fromRequestToModel(contactRequest))));
+        return contactMapper.fromModelToResponse
+                (contactRepository.save(contactMapper.fromRequestToModel(contactRequest)));
     }
 
-    public ResponseEntity<List<ContactWrapper>> getAllContacts(Long userId) {
+    public ContactResponseList getAllContacts(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user)) {
             log.info("Inside getAllContacts {}", contactRepository.getAllContacts());
-            return ResponseEntity.status(HttpStatus.OK).body(contactRepository.getAllContacts());
+            List<Contact> contacts = contactRepository.findAll();
+            ContactResponseList list = new ContactResponseList();
+            List<ContactResponse> contactResponses = contactMapper.fromModelListToResponseList(contacts);
+            list.setContactResponses(contactResponses);
+            return list;
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        throw new UnauthorizedException(HttpStatus.UNAUTHORIZED.name(), ErrorMessage.UNAUTHORIZED);
     }
 
     public void deleteContactById(Long userId, Long contactId) {
