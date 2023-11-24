@@ -4,6 +4,7 @@ import az.digitalhands.oficenter.domain.Collection;
 import az.digitalhands.oficenter.domain.User;
 import az.digitalhands.oficenter.enums.UserRole;
 import az.digitalhands.oficenter.exception.CollectionNotFoundException;
+import az.digitalhands.oficenter.exception.UnauthorizedException;
 import az.digitalhands.oficenter.exception.UserNotFoundException;
 import az.digitalhands.oficenter.exception.error.ErrorMessage;
 import az.digitalhands.oficenter.mappers.CollectionMapper;
@@ -11,7 +12,7 @@ import az.digitalhands.oficenter.repository.CollectionRepository;
 import az.digitalhands.oficenter.repository.UserRepository;
 import az.digitalhands.oficenter.request.CollectionRequest;
 import az.digitalhands.oficenter.response.CollectionResponse;
-import az.digitalhands.oficenter.wrapper.CollectionWrapper;
+import az.digitalhands.oficenter.response.CollectionResponseList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,20 +31,19 @@ public class CollectionService {
     private final UserRepository userRepository;
     private final CollectionMapper collectionMapper;
 
-    public ResponseEntity<CollectionResponse> createCollection(CollectionRequest collectionRequest, Long userId) {
+    public CollectionResponse createCollection(CollectionRequest collectionRequest, Long userId) {
         log.info("Inside collectionRequest {}", collectionRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Collection collection = collectionMapper.fromRequestToModel(collectionRequest);
             log.info("Inside createCollection {}", collection);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(collectionMapper.fromModelToResponse(collectionRepository.save(collection)));
+            return collectionMapper.fromModelToResponse(collectionRepository.save(collection));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        throw new UnauthorizedException(HttpStatus.UNAUTHORIZED.name(), ErrorMessage.UNAUTHORIZED);
     }
 
-    public ResponseEntity<CollectionResponse> updateCollection(CollectionRequest collectionRequest, Long userId) {
+    public CollectionResponse updateCollection(CollectionRequest collectionRequest, Long userId) {
         log.info("Inside collectionRequest {}", collectionRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
@@ -52,24 +52,27 @@ public class CollectionService {
                     () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COLLECTION_NOT_FOUND));
             if (Objects.nonNull(findCollection)) {
                 log.info("Inside updateCollection {}", collectionRequest);
-                return ResponseEntity.status(HttpStatus.OK)
-                        .body(collectionMapper.fromModelToResponse
-                                (collectionRepository.save(collectionMapper.fromRequestToModel(collectionRequest))));
+                return collectionMapper.fromModelToResponse
+                        (collectionRepository.save(collectionMapper.fromRequestToModel(collectionRequest)));
             } else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                throw new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COLLECTION_NOT_FOUND);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        throw new UnauthorizedException(HttpStatus.UNAUTHORIZED.name(), ErrorMessage.UNAUTHORIZED);
     }
 
-    public ResponseEntity<List<CollectionWrapper>> getAllCollection() {
-        return ResponseEntity.status(HttpStatus.OK).body(collectionRepository.getAllCollection());
+    public CollectionResponseList getAllCollection() {
+        List<Collection> collections = collectionRepository.findAll();
+        CollectionResponseList list = new CollectionResponseList();
+        List<CollectionResponse> collectionResponses = collectionMapper.fromModelListToResponseList(collections);
+        list.setCollectionResponses(collectionResponses);
+        return list;
     }
 
-    public ResponseEntity<CollectionResponse> getCollectionById(Long collectionId) {
+    public CollectionResponse getCollectionById(Long collectionId) {
         Collection collection = collectionRepository.findById(collectionId).orElseThrow(
                 () -> new CollectionNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.COLLECTION_NOT_FOUND));
         log.info("Inside getCollectionById {}", collection);
-        return ResponseEntity.status(HttpStatus.OK).body(collectionMapper.fromModelToResponse(collection));
+        return collectionMapper.fromModelToResponse(collection);
     }
 
     public void deleteById(Long userId, Long collectionId) {
