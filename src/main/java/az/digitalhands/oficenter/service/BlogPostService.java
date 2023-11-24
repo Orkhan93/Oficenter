@@ -4,6 +4,7 @@ import az.digitalhands.oficenter.domain.BlogPost;
 import az.digitalhands.oficenter.domain.User;
 import az.digitalhands.oficenter.enums.UserRole;
 import az.digitalhands.oficenter.exception.BlogPostNotFoundException;
+import az.digitalhands.oficenter.exception.UnauthorizedException;
 import az.digitalhands.oficenter.exception.UserNotFoundException;
 import az.digitalhands.oficenter.exception.error.ErrorMessage;
 import az.digitalhands.oficenter.mappers.BlogPostMapper;
@@ -33,7 +34,7 @@ public class BlogPostService {
     private final UserRepository userRepository;
     private final BlogPostMapper blogPostMapper;
 
-    public ResponseEntity<BlogPostResponse> createBlog(BlogPostRequest blogPostRequest, Long userId) {
+    public BlogPostResponse createBlog(BlogPostRequest blogPostRequest, Long userId) {
         log.info("Inside blogPostRequest {}", blogPostRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
@@ -41,13 +42,12 @@ public class BlogPostService {
             BlogPost blogPost = blogPostMapper.fromRequestToModel(blogPostRequest);
             blogPost.setCreationDate(LocalDateTime.now());
             log.info("Inside createBlog {}", blogPost);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(blogPostMapper.fromModelToResponse(blogPostRepository.save(blogPost)));
+            return blogPostMapper.fromModelToResponse(blogPostRepository.save(blogPost));
         } else
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            throw new UnauthorizedException(HttpStatus.UNAUTHORIZED.name(), ErrorMessage.UNAUTHORIZED);
     }
 
-    public ResponseEntity<BlogPostResponse> updateBlog(BlogPostRequest blogPostRequest, Long userId) {
+    public BlogPostResponse updateBlog(BlogPostRequest blogPostRequest, Long userId) {
         log.info("Inside blogPostRequest {}", blogPostRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
@@ -58,12 +58,11 @@ public class BlogPostService {
                 BlogPost updatedBlog = blogPostMapper.fromRequestToModel(blogPostRequest);
                 updatedBlog.setCreationDate(LocalDateTime.now());
                 log.info("Inside updateBlog {}", updatedBlog);
-                return ResponseEntity.status(HttpStatus.OK)
-                        .body(blogPostMapper.fromModelToResponse(blogPostRepository.save(updatedBlog)));
+                return blogPostMapper.fromModelToResponse(blogPostRepository.save(updatedBlog));
             } else
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                throw new BlogPostNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.BLOG_POST_NOT_FOUND);
         } else
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            throw new UnauthorizedException(HttpStatus.UNAUTHORIZED.name(), ErrorMessage.UNAUTHORIZED);
     }
 
     public BlogPostResponseList getAllBlogs() {

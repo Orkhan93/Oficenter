@@ -4,13 +4,10 @@ import az.digitalhands.oficenter.request.BlogPostRequest;
 import az.digitalhands.oficenter.response.BlogPostResponse;
 import az.digitalhands.oficenter.response.BlogPostResponseList;
 import az.digitalhands.oficenter.service.BlogPostService;
-import az.digitalhands.oficenter.wrapper.BlogPostWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/blog-post")
@@ -22,13 +19,13 @@ public class BlogPostController {
     @PostMapping("/add/{userId}")
     public ResponseEntity<BlogPostResponse> createBlog(@RequestBody BlogPostRequest blogPostRequest,
                                                        @PathVariable Long userId) {
-        return blogPostService.createBlog(blogPostRequest, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(blogPostService.createBlog(blogPostRequest, userId));
     }
 
     @PutMapping("/update/{userId}")
     public ResponseEntity<BlogPostResponse> updateBlog(@RequestBody BlogPostRequest blogPostRequest,
                                                        @PathVariable Long userId) {
-        return blogPostService.updateBlog(blogPostRequest, userId);
+        return ResponseEntity.status(HttpStatus.OK).body(blogPostService.updateBlog(blogPostRequest, userId));
     }
 
     @GetMapping("/getAll")

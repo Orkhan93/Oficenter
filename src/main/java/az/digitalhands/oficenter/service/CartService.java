@@ -16,7 +16,6 @@ import az.digitalhands.oficenter.response.CartResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +35,7 @@ public class CartService {
     private final CartMapper cartMapper;
 
     @Transactional
-    public ResponseEntity<CartResponse> addItemToCart(Long productId, Integer quantity, String email) {
+    public CartResponse addItemToCart(Long productId, Integer quantity, String email) {
         Customer customer = customerRepository.findByEmailEqualsIgnoreCase(email).orElseThrow(
                 () -> new CustomerNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CUSTOMER_NOT_FOUND));
         Cart cart = customer.getCart();
@@ -92,12 +91,11 @@ public class CartService {
         cart.setTotalItems(totalItem);
         cart.setCustomer(customer);
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(cartMapper.fromModelToResponse(cartRepository.save(cart)));
+        return cartMapper.fromModelToResponse(cartRepository.save(cart));
     }
 
     @Transactional
-    public ResponseEntity<CartResponse> updateCart(Long productId, Integer quantity, String email) {
+    public CartResponse updateCart(Long productId, Integer quantity, String email) {
         Customer customer = customerRepository.findByEmailEqualsIgnoreCase(email)
                 .orElseThrow(() -> new CustomerNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CUSTOMER_NOT_FOUND));
         if (Objects.nonNull(customer)) {
@@ -115,19 +113,18 @@ public class CartService {
             cart.setTotalPrice(totalPrice);
             cart.setTotalItems(totalItem);
             log.info("Inside updateCart {}", cart);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(cartMapper.fromModelToResponse(cartRepository.save(cart)));
+            return cartMapper.fromModelToResponse(cartRepository.save(cart));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        throw new CustomerNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CUSTOMER_NOT_FOUND);
     }
 
     @Transactional
-    public ResponseEntity<CartResponse> getCartByCustomerEmail(String customerEmail) {
+    public CartResponse getCartByCustomerEmail(String customerEmail) {
         Customer customer = customerRepository.findByEmailEqualsIgnoreCase(customerEmail).orElseThrow(
                 () -> new CustomerNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CUSTOMER_NOT_FOUND));
         Cart cart = customer.getCart();
         log.info("Inside getCartByCustomerEmail {}", cart);
-        return ResponseEntity.status(HttpStatus.OK).body(cartMapper.fromModelToResponse(cart));
+        return cartMapper.fromModelToResponse(cart);
     }
 
     private CartItem find(Set<CartItem> cartItems, long productId) {
