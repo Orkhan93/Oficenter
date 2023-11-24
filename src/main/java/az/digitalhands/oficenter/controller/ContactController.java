@@ -2,13 +2,12 @@ package az.digitalhands.oficenter.controller;
 
 import az.digitalhands.oficenter.request.ContactRequest;
 import az.digitalhands.oficenter.response.ContactResponse;
+import az.digitalhands.oficenter.response.ContactResponseList;
 import az.digitalhands.oficenter.service.ContactService;
-import az.digitalhands.oficenter.wrapper.ContactWrapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/contacts")
@@ -19,12 +18,12 @@ public class ContactController {
 
     @PostMapping("/add")
     public ResponseEntity<ContactResponse> addContact(@RequestBody ContactRequest contactRequest) {
-        return contactService.addContact(contactRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(contactService.addContact(contactRequest));
     }
 
     @GetMapping("/getAll/{userId}")
-    public ResponseEntity<List<ContactWrapper>> getAllContacts(@PathVariable(name = "userId") Long userId) {
-        return contactService.getAllContacts(userId);
+    public ResponseEntity<ContactResponseList> getAllContacts(@PathVariable(name = "userId") Long userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(contactService.getAllContacts(userId));
     }
 
     @DeleteMapping("/{userId}/delete/{contactId}")

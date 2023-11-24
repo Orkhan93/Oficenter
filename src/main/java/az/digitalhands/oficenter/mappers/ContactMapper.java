@@ -6,6 +6,8 @@ import az.digitalhands.oficenter.response.ContactResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
@@ -16,5 +18,7 @@ public interface ContactMapper {
     ContactResponse fromModelToResponse(Contact contact);
 
     ContactResponse fromRequestToResponse(ContactRequest contactRequest);
+
+    List<ContactResponse> fromModelListToResponseList(List<Contact> contacts);
 
 }
