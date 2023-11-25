@@ -54,24 +54,19 @@ public class CustomerController {
 
     @PutMapping("/update")
     public ResponseEntity<CustomerResponse> updateCustomer(@RequestBody CustomerRequest customerRequest) {
-        return customerService.updateCustomer(customerRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(customerService.updateCustomer(customerRequest));
     }
 
     @PutMapping("/changePassword/{customerId}")
     public ResponseEntity<CustomerResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest,
                                                            @PathVariable(name = "customerId") Long customerId) {
-        return customerService.changePassword(changePasswordRequest, customerId);
+        return ResponseEntity.status(HttpStatus.OK).body(customerService.changePassword(changePasswordRequest, customerId));
     }
 
     @PostMapping("/forgotPassword")
     public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest)
             throws MessagingException {
-        return customerService.forgotPassword(forgotPasswordRequest);
-    }
-
-    @PostMapping("/checkCustomerToken") //
-    public ResponseEntity<?> checkCustomerToken(String token) {
-        return customerService.checkCustomerToken(token);
+        return ResponseEntity.status(HttpStatus.OK).body(customerService.forgotPassword(forgotPasswordRequest));
     }
 
 }
