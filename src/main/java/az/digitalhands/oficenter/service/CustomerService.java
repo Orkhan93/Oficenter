@@ -28,7 +28,6 @@ import static az.digitalhands.oficenter.constant.OficenterConstant.USER_ALREADY_
 import static az.digitalhands.oficenter.exception.error.ErrorMessage.BAD_CREDENTIALS;
 import static az.digitalhands.oficenter.exception.error.ErrorMessage.USER_NOT_FOUND;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.OK;
 
 @Slf4j
 @Service
@@ -64,18 +63,17 @@ public class CustomerService {
         return BAD_CREDENTIALS;
     }
 
-    public ResponseEntity<CustomerResponse> updateCustomer(CustomerRequest customerRequest) {
+    public CustomerResponse updateCustomer(CustomerRequest customerRequest) {
         Customer customer = customerRepository.findById(customerRequest.getId())
                 .orElseThrow(() -> new CustomerNotFoundException(HttpStatus.NOT_FOUND.name(), USER_NOT_FOUND));
-        if (Objects.nonNull(customer)) {
-            return ResponseEntity.status(OK)
-                    .body(customerMapper.fromModelToResponse
-                            (customerRepository.save(customerMapper.fromRequestToModel(customerRequest))));
+        if (Objects.isNull(customer)) {
+            throw new CustomerNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CUSTOMER_NOT_FOUND);
         }
-        return ResponseEntity.status(BAD_REQUEST).build();
+        return customerMapper.fromModelToResponse
+                (customerRepository.save(customerMapper.fromRequestToModel(customerRequest)));
     }
 
-    public ResponseEntity<CustomerResponse> changePassword(ChangePasswordRequest changePasswordRequest, Long customerId) {
+    public CustomerResponse changePassword(ChangePasswordRequest changePasswordRequest, Long customerId) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new CustomerNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CUSTOMER_NOT_FOUND + customerId));
         if (!customer.getPassword().equals(changePasswordRequest.getOldPassword())) {
@@ -85,17 +83,16 @@ public class CustomerService {
             throw new IncorrectPasswordException(BAD_REQUEST.name(), ErrorMessage.NOT_MATCHES);
         }
         customer.setPassword(changePasswordRequest.getNewPassword());
-        return ResponseEntity.status(OK)
-                .body(customerMapper.fromModelToResponse(customerRepository.save(customer)));
+        return customerMapper.fromModelToResponse(customerRepository.save(customer));
     }
 
-    public ResponseEntity<String> forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws MessagingException {
+    public String forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws MessagingException {
         Optional<Customer> optionalCustomer = customerRepository.findByEmailEqualsIgnoreCase(forgotPasswordRequest.getEmail());
         if (optionalCustomer.isPresent()) {
             emailService.forgetMail(optionalCustomer.get().getEmail(), BY_OFICENTER, optionalCustomer.get().getPassword());
-            return ResponseEntity.status(OK).body(OficenterConstant.CHECK_EMAIL);
+            return OficenterConstant.CHECK_EMAIL;
         } else
-            return ResponseEntity.status(BAD_REQUEST).body(ErrorMessage.USER_NOT_FOUND);
+            return ErrorMessage.USER_NOT_FOUND;
     }
 
     private boolean validationSignUp(CustomerRequest customerRequest) {
@@ -103,16 +100,4 @@ public class CustomerService {
                 && customerRequest.getPhone() != null && customerRequest.getPassword() != null;
     }
 
-    public ResponseEntity<?> checkCustomerToken(String token) {//
-        try {
-            Boolean tokenExpired = jwtUtil.isTokenExpired(token);
-            if(!tokenExpired)
-                return ResponseEntity.ok("Jwt not expired");
-            else {
-                return ResponseEntity.status(BAD_REQUEST).body("Jwt Expired..");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(BAD_REQUEST).body("Jwt Expired..");
-        }
-    }
 }
