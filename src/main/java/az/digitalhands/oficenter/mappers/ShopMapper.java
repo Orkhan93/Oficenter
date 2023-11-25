@@ -6,6 +6,8 @@ import az.digitalhands.oficenter.response.ShopResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring",
         unmappedSourcePolicy = ReportingPolicy.IGNORE,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
@@ -16,5 +18,7 @@ public interface ShopMapper {
     Shop fromRequestToModel(ShopRequest shopRequest);
 
     ShopResponse fromModelToResponse(Shop shop);
+
+    List<ShopResponse> fromModelListToResponseList(List<Shop> shops);
 
 }
