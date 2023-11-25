@@ -7,6 +7,7 @@ import az.digitalhands.oficenter.enums.StatusRole;
 import az.digitalhands.oficenter.enums.UserRole;
 import az.digitalhands.oficenter.exception.CategoryNotFoundException;
 import az.digitalhands.oficenter.exception.ProductNotFoundException;
+import az.digitalhands.oficenter.exception.UnauthorizedException;
 import az.digitalhands.oficenter.exception.UserNotFoundException;
 import az.digitalhands.oficenter.exception.error.ErrorMessage;
 import az.digitalhands.oficenter.mappers.ProductMapper;
@@ -16,6 +17,7 @@ import az.digitalhands.oficenter.repository.UserRepository;
 import az.digitalhands.oficenter.request.ProductRequest;
 import az.digitalhands.oficenter.request.UpdateStatusRequest;
 import az.digitalhands.oficenter.response.ProductResponse;
+import az.digitalhands.oficenter.response.ProductResponseList;
 import az.digitalhands.oficenter.wrapper.ProductWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +38,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final ProductMapper productMapper;
 
-    public ResponseEntity<ProductResponse> createProduct(ProductRequest productRequest, Long userId) {
+    public ProductResponse createProduct(ProductRequest productRequest, Long userId) {
         log.info("Inside productRequest {}", productRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
@@ -47,49 +49,54 @@ public class ProductService {
             product.setCategory(category);
             product.setStatus(StatusRole.FALSE);
             log.info("Inside createProduct {}", product);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(productMapper.fromModelToResponse(productRepository.save(product)));
+            return productMapper.fromModelToResponse(productRepository.save(product));
         } else
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
+            throw new UnauthorizedException(HttpStatus.UNAUTHORIZED.name(), ErrorMessage.UNAUTHORIZED);
     }
 
-    public ResponseEntity<ProductResponse> updateProduct(ProductRequest productRequest, Long userId) {
+    public ProductResponse updateProduct(ProductRequest productRequest, Long userId) {
         log.info("Inside productRequest {}", productRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
         if (Objects.nonNull(user) && user.getUserRole().equals(UserRole.ADMIN)) {
             Product product = productRepository.findById(productRequest.getId())
-                    .orElseThrow(() -> new ProductNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.PRODUCT_NOT_FOUND));
-            if (Objects.nonNull(product)) {
+                    .orElseThrow(() -> new ProductNotFoundException(HttpStatus.NOT_FOUND.name(),
+                            ErrorMessage.PRODUCT_NOT_FOUND));
+            if (Objects.isNull(product)) {
+                throw new ProductNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.PRODUCT_NOT_FOUND);
+            } else {
                 Category category = categoryRepository.findById(productRequest.getCategoryId())
-                        .orElseThrow(() -> new CategoryNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.CATEGORY_NOT_FOUND));
+                        .orElseThrow(() -> new CategoryNotFoundException(HttpStatus.NOT_FOUND.name(),
+                                ErrorMessage.CATEGORY_NOT_FOUND));
                 Product updateProduct = productMapper.fromRequestToModel(productRequest);
                 updateProduct.setCategory(category);
                 updateProduct.setStatus(StatusRole.FALSE);
                 log.info("Inside updateProduct {}", updateProduct);
-                return ResponseEntity.status(HttpStatus.OK)
-                        .body(productMapper.fromModelToResponse
-                                (productRepository.save(updateProduct)));
+                return productMapper.fromModelToResponse
+                        (productRepository.save(updateProduct));
             }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        throw new UnauthorizedException(HttpStatus.UNAUTHORIZED.name(), ErrorMessage.UNAUTHORIZED);
     }
 
-    public ResponseEntity<ProductResponse> getProductById(Long productId) {
+    public ProductResponse getProductById(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.PRODUCT_NOT_FOUND));
-        if (Objects.nonNull(product)) {
+        if (Objects.isNull(product)) {
+            throw new ProductNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.PRODUCT_NOT_FOUND);
+        } else {
             log.info("Inside getProductById {}", product);
-            return ResponseEntity.status(HttpStatus.OK).body(productMapper.fromModelToResponse(product));
+            return productMapper.fromModelToResponse(product);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    public ResponseEntity<List<ProductWrapper>> getAllProducts() {
+    public ProductResponseList getAllProducts() {
         log.info("Inside getAllProducts {}", productRepository.getAllProducts());
-        return ResponseEntity.status(HttpStatus.OK).body(productRepository.getAllProducts());
+        List<Product> products = productRepository.findAll();
+        ProductResponseList list = new ProductResponseList();
+        List<ProductResponse> productResponses = productMapper.fromModelListToResponseList(products);
+        list.setProductResponses(productResponses);
+        return list;
     }
 
     public ResponseEntity<List<ProductWrapper>> getAllProductsStatusTrue() {
@@ -110,7 +117,7 @@ public class ProductService {
     }
 
 
-    public ResponseEntity<ProductResponse> updateStatus(Long userId, UpdateStatusRequest statusRequest) {
+    public ProductResponse updateStatus(Long userId, UpdateStatusRequest statusRequest) {
         log.info("Inside statusRequest {}", statusRequest);
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException(HttpStatus.NOT_FOUND.name(), ErrorMessage.USER_NOT_FOUND));
@@ -120,12 +127,9 @@ public class ProductService {
             product.setStatus(statusRequest.getNewRole());
             log.info("Inside updateStatus {}", product);
             productRepository.save(product);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(productMapper.fromModelToResponse(productRepository.save(product)));
-
-        } else
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
+            return productMapper.fromModelToResponse(productRepository.save(product));
+        }
+        throw new UnauthorizedException(HttpStatus.UNAUTHORIZED.name(), ErrorMessage.UNAUTHORIZED);
     }
 
 }

@@ -21,7 +21,6 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +61,8 @@ public class ProductServiceTest {
         when(productRepository.findById(1L)).thenReturn(Optional.of(Util.product()));
         when(productRepository.findById(0L)).thenThrow(ProductNotFoundException.class);
         String name = "product-name";
-        ResponseEntity<ProductResponse> product = productService.getProductById(1L);
-        assertEquals(name, product.getBody().getName());
+        ProductResponse product = productService.getProductById(1L);
+        assertEquals(name, product.getName());
         assertThat(product).isNotNull();
 
         verify(productRepository).findById(Util.product().getId());
@@ -77,8 +76,7 @@ public class ProductServiceTest {
         when(categoryRepository.findById(0L)).thenThrow(CategoryNotFoundException.class);
         when(productRepository.save(Util.product())).thenReturn(Util.product());
 
-        ResponseEntity<ProductResponse> response = productService.createProduct(Util.productRequest(), Util.user().getId());
-        assertThat(response).isNotNull();
+        productService.createProduct(Util.productRequest(), Util.user().getId());
 
         verify(userRepository).findById(1L);
         verify(categoryRepository).findById(1L);
